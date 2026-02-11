@@ -1,6 +1,6 @@
 ---
 title: "Visualize Data"
-author: "Your Name"
+author: "Erica Sherman"
 format: gfm
 execute: 
   echo: true
@@ -26,7 +26,6 @@ Try your code again
 #| include: false
 
 
-
 ```
 
 
@@ -34,6 +33,9 @@ Try your code again
 ## Your Turn 0
 
 Add a setup chunk that loads the tidyverse packages.
+```{r}
+library(tidyverse)
+```
 
 
 ```{r}
@@ -47,8 +49,11 @@ head(mpg)
 Run the code on the slide to make a graph. Pay strict attention to spelling, capitalization, and parentheses!
 
 ```{r}
-#| label: add-label-1
-#add code
+#| label: Making a Scatterplot
+ggplot(mpg)+ # makes a blank plot
+  geom_point(aes(x=displ,
+                 y=hwy)) #geom_point makes a scatterplot, mapping aesthetics displ and hwy to x and y. geometry is scatterplot
+
 ```
 
 
@@ -57,9 +62,9 @@ Run the code on the slide to make a graph. Pay strict attention to spelling, cap
 Replace this scatterplot with one that draws boxplots. Use the cheatsheet. Try your best guess.
 
 ```{r}
-#| label: add-label-2
+#| label: Making a boxplot
 ggplot(data = mpg) +
-  geom_point(mapping = aes(x = class, y = hwy))
+  geom_boxplot(mapping = aes(x = class, y = hwy))
 ```
 
 
@@ -68,7 +73,9 @@ ggplot(data = mpg) +
 Make a histogram of the `hwy` variable from `mpg`. Hint: do not supply a y variable.
 
 ```{r}
-#| label: add-label-3
+#| label: Making histogram
+ggplot(mpg)+
+  geom_histogram(aes(x=hwy))
 ```
 
 ## Your Turn 4
@@ -76,7 +83,13 @@ Make a histogram of the `hwy` variable from `mpg`. Hint: do not supply a y varia
 Use the help page for `geom_histogram` to make the bins 2 units wide.
 
 ```{r}
-#| label: add-label-4
+#| label: Changing binwidth
+ggplot(mpg)+
+  geom_histogram(aes(x=hwy),
+                 binwidth = 2,
+                 alpha=2, #transparency of the color
+                 fill="lightblue", #fills the bars
+                 color="blue") #outlines the bars
 ```
 
 
@@ -88,7 +101,13 @@ Add `color`, `size`, `alpha`, and `shape` aesthetics to your graph. Experiment.
 #| label: add-label-5
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, 
-                           y = hwy))
+                           y = hwy,
+                           color= class))+
+  labs(x="Engine size Displacement",
+       y="Highway Mileage (mpg)",
+       title= "The Bigger the Engine The Less Mileage We Get on The Freeway",
+       color="Class of Vehicle") +
+  theme_light()
 ```
 
 ## Help Me
@@ -97,14 +116,14 @@ What do `facet_grid()` and `facet_wrap()` do?
 (run the code, interpret, convince your group)
 
 ```{r}
-#| label: add-label-help-me
+#| label: faceting
 # Makes a plot that the commands below will modify
 q <- ggplot(mpg) + geom_point(aes(x = displ, y = hwy))
 
-q + facet_grid(. ~ cyl)
-q + facet_grid(drv ~ .)
-q + facet_grid(drv ~ cyl)
-q + facet_wrap(~ class)
+q + facet_grid(. ~ cyl) # 4 columns based on cyl
+q + facet_grid(drv ~ .) # 3rows of dev
+q + facet_grid(drv ~ cyl) #3 rows drv, 4 columns cyl
+q + facet_wrap(~ class) #each class
 ```
 
 
@@ -113,7 +132,15 @@ q + facet_wrap(~ class)
 Make a bar chart `class` colored by `class`. Use the help page for `geom_bar` to choose a "color" aesthetic for class.
 
 ```{r}
-#| label: add-label-6
+#| label: Making a Bar chart
+ggplot(mpg) +
+  geom_bar(aes(x=class, fill=drv),
+           position = "dodge") +
+  labs(x= "Class of Vehicle",
+       y= "Count of Vehicles in Sample",
+       fill= "Type of Drive")+
+  theme_bw()
+
 ```
 
 ## Quiz
@@ -121,10 +148,14 @@ Make a bar chart `class` colored by `class`. Use the help page for `geom_bar` to
 What will this code do?
 
 ```{r}
-ggplot(mpg) + 
-  geom_point(aes(displ, hwy)) +
-  geom_smooth(aes(displ, hwy)) 
-#  ggsave("example.jpg")
+ggplot(mpg, aes(x=displ, y=hwy)) + 
+  geom_point(aes(color=class)) +
+  geom_smooth(color="black",
+              se=FALSE,
+              method = "lm") +
+  scale_color_viridis_d()
+#ggsave("example.jpg", width = 6, height= 4)
+#adds smooth line and points to the plot
 ```
 
 
@@ -136,7 +167,6 @@ You can use this starter code template to make thousands of graphs with **ggplot
 
 ```{r}
 #| label: template
-#| eval: false
-ggplot(data = <DATA>) +
-  <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
-```
+#| eval: FALSE
+#ggplot(data = <DATA>) +
+# <GEOM_FUNCTION>(mapping= aes(<MAPPINGS>))
